@@ -6,16 +6,14 @@ import { Button } from "@douyinfe/semi-ui"
 import { IconMoon, IconSun } from "@douyinfe/semi-icons"
 import { useState } from "react"
 
-
+const darkMode = localStorage.getItem('theme-mode') === 'dark';
+if (darkMode) {
+  document.body.setAttribute('theme-mode', 'dark');
+} else {
+  document.body.removeAttribute('theme-mode');
+}
 
 function App() {
-  // const darkMode = localStorage.getItem('theme-mode') === 'dark';
-  // if (darkMode) {
-  //   document.body.setAttribute('theme-mode', 'dark');
-  // } else {
-  //   document.body.removeAttribute('theme-mode');
-  // }
-
   const body = document.body;
   const [icon, setIcon] = useState<JSX.Element>(
     body.hasAttribute('theme-mode')
@@ -26,13 +24,14 @@ function App() {
   const changeTheme = (): void => {
     if (body.hasAttribute('theme-mode')) {
       body.removeAttribute('theme-mode');
+      localStorage.setItem('theme-mode', 'light');
       setIcon(<IconMoon />);
     } else {
       body.setAttribute('theme-mode', 'dark');
+      localStorage.setItem('theme-mode', 'dark');
       setIcon(<IconSun />);
     }
   }
-
 
   return (
     <>
