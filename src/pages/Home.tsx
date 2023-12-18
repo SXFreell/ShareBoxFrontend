@@ -1,6 +1,6 @@
 import { Button, Input, Radio, RadioGroup, Space, TextArea } from "@douyinfe/semi-ui"
 import { MouseEventHandler, useState } from "react"
-import '@css/Home.less'
+import '@css/home.less'
 
 const Home = () => {
     // const navigate: NavigateFunction = useNavigate()
