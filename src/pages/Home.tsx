@@ -20,6 +20,7 @@ const Home = () => {
     const [doWhat, setDoWhat] = useState<string>('get');
     const [code, setCode] = useState<string>('');
     const [textFile, setTextFile] = useState<string>('')
+    const [getTextFile, setGetTextFile] = useState<string>('')
 
     // const handleClick: MouseEventHandler = () => {
     //     console.log('doWhat', doWhat)
@@ -32,6 +33,18 @@ const Home = () => {
         return reg.test(code);
     }
 
+    const handleGetTextFile: MouseEventHandler = () => {
+        if (!verCode(code, true)) return;
+        instance.post('/get', {
+            code: code
+        }).then((res: any) => {
+            setGetTextFile(res.data.data.content)
+            console.log(res)
+        }).catch((err: any) => {
+            console.log(err)
+        })
+    }
+
     const handleSaveTextFile: MouseEventHandler = () => {
         instance.post('/set', {
             type: 'TEXT',
@@ -39,9 +52,9 @@ const Home = () => {
                 content: textFile,
                 expires: -1
             }
-        }).then((res) => {
+        }).then((res: any) => {
             console.log(res)
-        }).catch((err) => {
+        }).catch((err: any) => {
             console.log(err)
         })
         // const blob = new Blob([textFile], {type: 'text/plain'})
@@ -82,13 +95,19 @@ const Home = () => {
                     <Space vertical align="start">
                         <Input
                             prefix="取件码"
-                            suffix={<Button type="primary" onClick={() => { }}>取文件</Button>}
+                            suffix={<Button type="primary" onClick={ handleGetTextFile }>取文件</Button>}
                             value={code}
                             onInput={(e: any) => {
                                 verCode(e.target.value)
                                     && setCode(e.target.value)
                             }}
                         ></Input>
+                        <TextArea
+                            autosize
+                            maxCount={200000}
+                            style={{width: '100%', maxWidth: 400}}
+                            value={getTextFile}
+                        />
                     </Space> :
                     <Space vertical align="start" style={{width: '100%'}}>
                         <TextArea
