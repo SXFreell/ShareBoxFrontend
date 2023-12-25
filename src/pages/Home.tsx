@@ -83,7 +83,6 @@ const transTimestamp: Function = (
 
 const Home = () => {
     const query = useQuery();
-    const getCode: string | null = query.get('code');
     const navigate: NavigateFunction = useNavigate();
 
     const [doWhat, setDoWhat] = useState<string>('get');
@@ -97,7 +96,7 @@ const Home = () => {
     const [expirationTime, setExpirationTime] = useState<number>(Date.now())
     const [countDateType, setCountDateType] = useState<CountDateType>('days')
     const [countDate, setCountDate] = useState<number>(1)
-    const [countdown, setCountdown] = useState<number>(1)
+    const [pickupCount, setPickupCount] = useState<number>(1)
     const [textFile, setTextFile] = useState<string>('')
 
     const handleGetTextFile: MouseEventHandler = () => {
@@ -120,6 +119,7 @@ const Home = () => {
             set_text_content: {
                 content: textFile,
                 expires: parseInt(transTimestamp(expiresType, countDateType, countDate, expirationTime)),
+                pickup_count: expiresType === 'pickup-count' ? pickupCount : -1
             }
         }).then(() => {
             Toast.success({
@@ -131,6 +131,7 @@ const Home = () => {
     }
 
     useEffect(() => {
+        const getCode: string | null = query.get('code');
         if (getCode !== null && code !== getCode) {
             if (verCode(getCode, true)) {
                 setCode(getCode)
@@ -201,6 +202,7 @@ const Home = () => {
                                     <>
                                         <InputNumber
                                             placeholder="倒计时"
+                                            innerButtons={true}
                                             min={dateMaxAndMin[countDateType].min}
                                             max={dateMaxAndMin[countDateType].max}
                                             style={{width: 200}}
@@ -231,8 +233,8 @@ const Home = () => {
                                         max={99999}
                                         style={{width: 200}}
                                         suffix={"次"}
-                                        value={countdown}
-                                        onChange={(value: any) => {setCountdown(value)}}
+                                        value={pickupCount}
+                                        onChange={(value: any) => {setPickupCount(value)}}
                                     /> :
                                 null
                             }
