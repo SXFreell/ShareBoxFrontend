@@ -1,6 +1,6 @@
-import { Button, DatePicker, Input, InputNumber, Radio, RadioGroup, Select, Space, TextArea, Toast } from "@douyinfe/semi-ui"
+import { Banner, Button, DatePicker, Input, InputNumber, Radio, RadioGroup, Select, Space, TextArea, Toast, Typography } from "@douyinfe/semi-ui"
 import { MouseEventHandler, useEffect, useState } from "react"
-import '@css/home.less'
+import styles from '@css/home.module.less'
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import instance from "@/net/axios.tsx";
 
@@ -18,8 +18,17 @@ interface DateMaxAndMin {
     seconds: MaxAndMin
 }
 
+interface CodeListItem {
+    code: string | null,
+    content: string,
+    status: CodeListItemStatus,
+}
+
 type ExpiresType = 'never-expires' | 'expiration-time' | 'countdown' | 'pickup-count'
 type CountDateType = 'years' | 'months' | 'days' | 'hours' | 'minutes' | 'seconds'
+type CodeListItemStatus = 'success' | 'danger'
+
+const { Text } = Typography;
 
 const useQuery = () => {
     return new URLSearchParams(useLocation().search);
@@ -99,6 +108,8 @@ const Home = () => {
     const [pickupCount, setPickupCount] = useState<number>(1)
     const [textFile, setTextFile] = useState<string>('')
 
+    const [codeList, setCodeList] = useState<CodeListItem[]>([])
+
     const handleGetTextFile: MouseEventHandler = () => {
         if (!verCode(code, true)) return;
         instance.post('/get', {
@@ -114,6 +125,7 @@ const Home = () => {
     }
 
     const handleSaveTextFile: MouseEventHandler = () => {
+        if (textFile.length === 0) return;
         instance.post('/set', {
             type: 'TEXT',
             set_text_content: {
@@ -121,11 +133,21 @@ const Home = () => {
                 expires: parseInt(transTimestamp(expiresType, countDateType, countDate, expirationTime)),
                 pickup_count: expiresType === 'pickup-count' ? pickupCount : -1
             }
-        }).then(() => {
+        }).then((res: any) => {
+            setCodeList([...codeList, {
+                code: res.data.code,
+                content: textFile,
+                status: 'success'
+            }])
             Toast.success({
                 content: '保存成功'
             })
         }).catch((err: any) => {
+            setCodeList([...codeList, {
+                code: null,
+                content: textFile,
+                status: 'danger'
+            }])
             console.log(err)
         })
     }
@@ -246,6 +268,25 @@ const Home = () => {
                             value={textFile}
                             onChange={(text: string) => {setTextFile(text)}}
                         />
+                        {
+                            codeList.map((item: CodeListItem, index: number) => {
+                                return <Banner
+                                    key={`banner-code-${index}`}
+                                    style={{width: 376}}
+                                    fullMode={false}
+                                    type={item.status}
+                                    onClose={() => {
+                                        setCodeList(codeList.filter(listItem => listItem.code !== item.code))
+                                    }}
+                                    title={
+                                        <div className={styles['banner-code-title']}>
+                                            CODE: <Text link={{href: `/?code=${item.code}`, target: '_blank'}}>{item.code}</Text>
+                                        </div>
+                                    }
+                                    description={<Text className={styles["banner-code-description"]} type="tertiary">{item.content}</Text>}
+                                />
+                            })
+                        }
                         <Button type="primary" onClick={handleSaveTextFile}>存文件</Button>
                     </Space>
             }
