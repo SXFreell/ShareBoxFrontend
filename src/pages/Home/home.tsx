@@ -1,6 +1,6 @@
-import { Banner, Button, DatePicker, Input, InputNumber, Radio, RadioGroup, Select, Space, TextArea, Toast, Typography } from "@douyinfe/semi-ui"
+import { Button, DatePicker, Input, InputNumber, Radio, Select, Space, Typography } from "@arco-design/web-react"
 import { MouseEventHandler, useEffect, useState } from "react"
-import styles from '@css/home.module.less'
+import styles from './home.module.less'
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import instance from "@/net/axios.tsx";
 
@@ -116,15 +116,15 @@ const Home = () => {
             code: code
         }).then((res: any) => {
             setGetTextFile(res.data.data.content)
-            Toast.success({
-                content: '取件成功'
-            })
+            // Toast.success({
+            //     content: '取件成功'
+            // })
         }).catch((err: any) => {
             console.log(err)
         })
     }
 
-    const handleSaveTextFile: MouseEventHandler = () => {
+    const handleSaveTextFile: Function = () => {
         if (textFile.length === 0) return;
         instance.post('/set', {
             type: 'TEXT',
@@ -139,9 +139,9 @@ const Home = () => {
                 content: textFile,
                 status: 'success'
             }])
-            Toast.success({
-                content: '保存成功'
-            })
+            // Toast.success({
+            //     content: '保存成功'
+            // })
         }).catch((err: any) => {
             setCodeList([...codeList, {
                 code: null,
@@ -164,40 +164,39 @@ const Home = () => {
     }, [])
 
     return (
-        <Space vertical align="start"  style={{width: '100%'}}>
-            <RadioGroup
+        <Space className={styles['space-margin']} direction="vertical" align="start"  style={{width: '100%'}}>
+            <Radio.Group
                 type="button"
                 defaultValue={'get'}
                 value={doWhat}
-                aria-label="存OR取"
                 name="do-what"
-                onChange={(e: any) => {
-                    setDoWhat(e.target.value)
-                }}
+                onChange={(e: 'set'|'get') => { setDoWhat(e) }}
             >
                 <Radio value={'get'}>取</Radio>
                 <Radio value={'set'}>存</Radio>
-            </RadioGroup>
+            </Radio.Group>
             {
                 doWhat === 'get' ?
-                    <Space vertical align="start">
+                    <Space direction="vertical" align="start">
                         <Input
                             prefix="取件码"
-                            suffix={<Button type="primary" onClick={ handleGetTextFile }>取文件</Button>}
+                            suffix={<Button size="default" onClick={ () => handleGetTextFile }>取文件</Button>}
                             value={code}
                             onInput={(e: any) => {
                                 verCode(e.target.value)
                                     && setCode(e.target.value)
                             }}
+                            style={{width: 320}}
                         ></Input>
-                        <TextArea
-                            autosize
-                            maxCount={200000}
-                            style={{width: '100%', maxWidth: 400}}
+                        <Input.TextArea
+                            autoSize={{minRows: 3, maxRows: 10}}
+                            maxLength={200000}
+                            style={{width: 320}}
+                            showWordLimit
                             value={getTextFile}
                         />
                     </Space> :
-                    <Space vertical align="start" style={{width: '100%'}}>
+                    <Space direction="vertical" align="start" style={{width: '100%'}}>
                         <Space>
                             <Select
                                 defaultValue={"never-expires"}
@@ -213,10 +212,10 @@ const Home = () => {
                             {
                                 expiresType === 'expiration-time' ?
                                     <DatePicker
-                                        type="dateTime"
+                                        // type="dateTime"
                                         placeholder="过期时间"
                                         disabledDate={disabledDate}
-                                        hideDisabledOptions
+                                        // hideDisabledOptions
                                         value={expirationTime}
                                         onChange={(date: any) => {setExpirationTime(date)}}
                                     /> :
@@ -224,10 +223,9 @@ const Home = () => {
                                     <>
                                         <InputNumber
                                             placeholder="倒计时"
-                                            innerButtons={true}
                                             min={dateMaxAndMin[countDateType].min}
                                             max={dateMaxAndMin[countDateType].max}
-                                            style={{width: 200}}
+                                            style={{width: 200, marginRight: 8}}
                                             value={countDate}
                                             onChange={(value: any) => {setCountDate(value)}}
                                         /> 
@@ -261,33 +259,33 @@ const Home = () => {
                                 null
                             }
                         </Space>
-                        <TextArea
-                            autosize
-                            maxCount={200000}
-                            style={{width: '100%', maxWidth: 400}}
+                        <Input.TextArea
+                            autoSize={{minRows: 3, maxRows: 10}}
+                            maxLength={200000}
+                            style={{width: 320}}
                             value={textFile}
                             onChange={(text: string) => {setTextFile(text)}}
                         />
                         {
-                            codeList.map((item: CodeListItem, index: number) => {
-                                return <Banner
-                                    key={`banner-code-${index}`}
-                                    style={{width: 376}}
-                                    fullMode={false}
-                                    type={item.status}
-                                    onClose={() => {
-                                        setCodeList(codeList.filter(listItem => listItem.code !== item.code))
-                                    }}
-                                    title={
-                                        <div className={styles['banner-code-title']}>
-                                            CODE: <Text link={{href: `/?code=${item.code}`, target: '_blank'}}>{item.code}</Text>
-                                        </div>
-                                    }
-                                    description={<Text className={styles["banner-code-description"]} type="tertiary">{item.content}</Text>}
-                                />
-                            })
+                            // codeList.map((item: CodeListItem, index: number) => {
+                            //     return <Banner
+                            //         key={`banner-code-${index}`}
+                            //         style={{width: 376}}
+                            //         fullMode={false}
+                            //         type={item.status}
+                            //         onClose={() => {
+                            //             setCodeList(codeList.filter(listItem => listItem.code !== item.code))
+                            //         }}
+                            //         title={
+                            //             <div className={styles['banner-code-title']}>
+                            //                 CODE: <Text link={{href: `/?code=${item.code}`, target: '_blank'}}>{item.code}</Text>
+                            //             </div>
+                            //         }
+                            //         description={<Text className={styles["banner-code-description"]} type="secondary">{item.content}</Text>}
+                            //     />
+                            // })
                         }
-                        <Button type="primary" onClick={handleSaveTextFile}>存文件</Button>
+                        <Button type="primary" onClick={() => handleSaveTextFile}>存文件</Button>
                     </Space>
             }
             {/* <Button type="primary" onClick={handleClick}>查看当前选项</Button> */}

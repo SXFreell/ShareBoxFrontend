@@ -1,35 +1,41 @@
 import { Route, Routes } from "react-router-dom"
-import Home from "@pages/Home.tsx"
-import Login from "@pages/Login.tsx"
-import NotFoundPage from "@/pages/404.tsx"
-import { Button } from "@douyinfe/semi-ui"
-import { IconMoon, IconSun } from "@douyinfe/semi-icons"
+import Home from "@pages/Home/home"
+import Login from "@pages/Login/login"
+import NotFoundPage from "@pages/404/404"
+import { Button } from "@arco-design/web-react"
+import { IconMoon, IconSun } from "@arco-design/web-react/icon"
 import { useState } from "react"
 
-const darkMode = localStorage.getItem('theme-mode') === 'dark';
+const iconStyle: React.CSSProperties = {
+  fontSize: 24,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+}
+
+const darkMode = localStorage.getItem('arco-theme') === 'dark';
 if (darkMode) {
-  document.body.setAttribute('theme-mode', 'dark');
+  document.body.setAttribute('arco-theme', 'dark');
 } else {
-  document.body.removeAttribute('theme-mode');
+  document.body.removeAttribute('arco-theme');
 }
 
 function App() {
   const body = document.body;
   const [icon, setIcon] = useState<JSX.Element>(
-    body.hasAttribute('theme-mode')
-      ? <IconSun />
-      : <IconMoon />
+    body.hasAttribute('arco-theme')
+      ? <IconSun style={iconStyle} />
+      : <IconMoon style={iconStyle} />
   );
 
   const changeTheme = (): void => {
-    if (body.hasAttribute('theme-mode')) {
-      body.removeAttribute('theme-mode');
-      localStorage.setItem('theme-mode', 'light');
-      setIcon(<IconMoon />);
+    if (body.hasAttribute('arco-theme')) {
+      body.removeAttribute('arco-theme');
+      localStorage.setItem('arco-theme', 'light');
+      setIcon(<IconMoon style={iconStyle} />);
     } else {
-      body.setAttribute('theme-mode', 'dark');
-      localStorage.setItem('theme-mode', 'dark');
-      setIcon(<IconSun />);
+      body.setAttribute('arco-theme', 'dark');
+      localStorage.setItem('arco-theme', 'dark');
+      setIcon(<IconSun style={iconStyle} />);
     }
   }
 
@@ -41,7 +47,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <div className="float-buttons">
-        <Button icon={icon} onClick={changeTheme} className="float-button"></Button>
+        <Button shape="circle" size="large" icon={icon} onClick={changeTheme} className="float-button"></Button>
       </div>
     </>
   )

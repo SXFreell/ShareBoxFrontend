@@ -12,13 +12,15 @@
     "newbuild": "npm run build && rm -rf ../ShareBoxBackend/static/dist && cp -r dist ../ShareBoxBackend/static/"
   },
   "dependencies": {
-    "@douyinfe/semi-ui": "^2.49.1",
+    "@arco-design/web-react": "^2.57.2",
+    "@arco-themes/react-suretheme": "^0.0.5",
     "axios": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
+    "@arco-plugins/vite-react": "^1.3.3",
     "@types/node": "^20.10.4",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
