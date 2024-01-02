@@ -169,7 +169,7 @@ const Home = () => {
     }, [])
 
     return (
-        <Space className={styles['space-margin']} direction="vertical" align="start"  style={{width: '100%'}}>
+        <Space className={styles['space-padding']} direction="vertical" align="start">
             <Radio.Group
                 type="button"
                 defaultValue={'get'}
