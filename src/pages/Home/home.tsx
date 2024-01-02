@@ -1,5 +1,5 @@
-import { Button, DatePicker, Input, InputNumber, Radio, Select, Space, Typography } from "@arco-design/web-react"
-import { MouseEventHandler, useEffect, useState } from "react"
+import { Alert, Button, DatePicker, Input, InputNumber, Radio, Select, Space, Tag, Typography } from "@arco-design/web-react"
+import { useEffect, useState } from "react"
 import styles from './home.module.less'
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import instance from "@/net/axios.tsx";
@@ -26,7 +26,7 @@ interface CodeListItem {
 
 type ExpiresType = 'never-expires' | 'expiration-time' | 'countdown' | 'pickup-count'
 type CountDateType = 'years' | 'months' | 'days' | 'hours' | 'minutes' | 'seconds'
-type CodeListItemStatus = 'success' | 'danger'
+type CodeListItemStatus = 'success' | 'error'
 
 const { Text } = Typography;
 
@@ -90,6 +90,11 @@ const transTimestamp: Function = (
     return -1;
 }
 
+const handleOpenCode = (code: string) => {
+    console.log(code)
+    window.open(`/?code=${code}`)
+}
+
 const Home = () => {
     const query = useQuery();
     const navigate: NavigateFunction = useNavigate();
@@ -110,7 +115,7 @@ const Home = () => {
 
     const [codeList, setCodeList] = useState<CodeListItem[]>([])
 
-    const handleGetTextFile: MouseEventHandler = () => {
+    const handleGetTextFile = () => {
         if (!verCode(code, true)) return;
         instance.post('/get', {
             code: code
@@ -124,7 +129,7 @@ const Home = () => {
         })
     }
 
-    const handleSaveTextFile: Function = () => {
+    const handleSaveTextFile = () => {
         if (textFile.length === 0) return;
         instance.post('/set', {
             type: 'TEXT',
@@ -146,7 +151,7 @@ const Home = () => {
             setCodeList([...codeList, {
                 code: null,
                 content: textFile,
-                status: 'danger'
+                status: 'error'
             }])
             console.log(err)
         })
@@ -180,7 +185,7 @@ const Home = () => {
                     <Space direction="vertical" align="start">
                         <Input
                             prefix="取件码"
-                            suffix={<Button size="default" onClick={ () => handleGetTextFile }>取文件</Button>}
+                            suffix={<Button size="default" onClick={ handleGetTextFile }>取文件</Button>}
                             value={code}
                             onInput={(e: any) => {
                                 verCode(e.target.value)
@@ -266,26 +271,30 @@ const Home = () => {
                             value={textFile}
                             onChange={(text: string) => {setTextFile(text)}}
                         />
+                        <Button type="primary" onClick={handleSaveTextFile}>存文件</Button>
                         {
-                            // codeList.map((item: CodeListItem, index: number) => {
-                            //     return <Banner
-                            //         key={`banner-code-${index}`}
-                            //         style={{width: 376}}
-                            //         fullMode={false}
-                            //         type={item.status}
-                            //         onClose={() => {
-                            //             setCodeList(codeList.filter(listItem => listItem.code !== item.code))
-                            //         }}
-                            //         title={
-                            //             <div className={styles['banner-code-title']}>
-                            //                 CODE: <Text link={{href: `/?code=${item.code}`, target: '_blank'}}>{item.code}</Text>
-                            //             </div>
-                            //         }
-                            //         description={<Text className={styles["banner-code-description"]} type="secondary">{item.content}</Text>}
-                            //     />
-                            // })
+                            codeList.map((item: CodeListItem, index: number) => {
+                                return <Alert
+                                    key={`banner-code-${index}`}
+                                    style={{width: 376}}
+                                    type={item.status}
+                                    onClose={() => {
+                                        setCodeList(codeList.filter(listItem => listItem.code !== item.code))
+                                    }}
+                                    title={
+                                        <div className={styles['banner-code-title']}>
+                                        {/* CODE: <a href={{`/?code=${item.code}`}} target='_blank'>{item.code}</a> */}
+                                            CODE: {
+                                                item.code === null ?
+                                                    <Text className={styles["banner-code-description"]} type="secondary">保存失败</Text> :
+                                                    <span onClick={() => handleOpenCode(item.code || '')}><Tag checkable checked size="small" color='green'>{item.code}</Tag></span>
+                                            }
+                                        </div>
+                                    }
+                                    content={<Text className={styles["banner-code-description"]} type="secondary">{item.content}</Text>}
+                                />
+                            })
                         }
-                        <Button type="primary" onClick={() => handleSaveTextFile}>存文件</Button>
                     </Space>
             }
             {/* <Button type="primary" onClick={handleClick}>查看当前选项</Button> */}
