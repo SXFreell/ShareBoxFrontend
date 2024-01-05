@@ -1,6 +1,6 @@
 import { Button, Form, Input, Space } from "@arco-design/web-react"
 
-import styles from './login.module.less'
+import './login.less'
 
 function Login() {
   const printValues: Function = (values: any, message: string) => {
@@ -8,7 +8,7 @@ function Login() {
   }
 
   return (
-    <Space className={styles['space-margin']}>
+    <Space className={'space-margin'}>
       <Form
         layout="vertical"
         // labelPosition="top"

@@ -1,0 +1,87 @@
+.banner-code-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5715;
+}
+
+.banner-code-description {
+    // 最多三行，超过三行显示省略号
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.space-padding {
+  padding: 8px;
+}
+
+@media screen and (max-width: 480px) {
+  .space-padding {
+    padding: 24px;
+    width: calc(100% - 48px);
+    .width-100 {
+      width: 100%;
+    }
+  }
+  .arco-space-vertical > .arco-space-item {
+    width: 100%;
+    textarea {
+      width: 100%;
+    }
+  }
+  .date-picker-space > .arco-space-item {
+    &:last-child {
+      flex-grow: 1;
+      .date-picker {
+        width: 100%;
+      }
+      .date-picker-box {
+        display: flex;
+        .date-picker {
+          flex-grow: 1;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 1024px) {
+  
+}
+
+// @media screen and (min-width: 1025px) {
+@media screen and (min-width: 481px) {
+  .space-padding {
+    padding: 8px;
+    width: calc(400px);
+    .width-100 {
+      width: 100%;
+    }
+  }
+  .arco-space-vertical > .arco-space-item {
+    width: 100%;
+    textarea {
+      width: 100%;
+    }
+  }
+  .date-picker-space > .arco-space-item {
+    &:last-child {
+      flex-grow: 1;
+      .date-picker {
+        width: 100%;
+      }
+      .date-picker-box {
+        display: flex;
+        .date-picker {
+          flex-grow: 1;
+        }
+      }
+    }
+  }
+  
+}

@@ -1,6 +1,6 @@
 import { Alert, Button, DatePicker, Input, InputNumber, Radio, Select, Space, Tag, Typography } from "@arco-design/web-react"
 import { useEffect, useState } from "react"
-import styles from './home.module.less'
+import './home.less'
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import instance from "@/net/axios.tsx";
 
@@ -169,7 +169,7 @@ const Home = () => {
     }, [])
 
     return (
-        <Space className={styles['space-padding']} direction="vertical" align="start">
+        <Space className={['space-padding', 'width-100']} direction="vertical" align="start">
             <Radio.Group
                 type="button"
                 defaultValue={'get'}
@@ -182,8 +182,9 @@ const Home = () => {
             </Radio.Group>
             {
                 doWhat === 'get' ?
-                    <Space direction="vertical" align="start">
+                    <Space className={'width-100'} direction="vertical" align="start">
                         <Input
+                            className={"arco-input-group-suffix-button-custom"}
                             prefix="取件码"
                             suffix={<Button size="default" onClick={ handleGetTextFile }>取文件</Button>}
                             value={code}
@@ -191,23 +192,21 @@ const Home = () => {
                                 verCode(e.target.value)
                                     && setCode(e.target.value)
                             }}
-                            style={{width: 320}}
                         ></Input>
                         <Input.TextArea
                             autoSize={{minRows: 3, maxRows: 10}}
                             maxLength={200000}
-                            style={{width: 320}}
                             showWordLimit
                             value={getTextFile}
                         />
                     </Space> :
-                    <Space direction="vertical" align="start" style={{width: '100%'}}>
-                        <Space>
+                    <Space className={'width-100'} direction="vertical" align="start">
+                        <Space className={['date-picker-space' ,'width-100']}>
                             <Select
                                 defaultValue={"never-expires"}
                                 value={expiresType}
                                 onChange={(value: any) => {setExpiresType(value)}}
-                                style={{width: 120}}
+                                style={{width: 100}}
                             >
                                 <Select.Option value={"never-expires"}>永不过期</Select.Option>
                                 <Select.Option value={"expiration-time"}>过期时间</Select.Option>
@@ -217,20 +216,20 @@ const Home = () => {
                             {
                                 expiresType === 'expiration-time' ?
                                     <DatePicker
-                                        // type="dateTime"
+                                        className={'date-picker'}
+                                        showTime
                                         placeholder="过期时间"
                                         disabledDate={disabledDate}
-                                        // hideDisabledOptions
                                         value={expirationTime}
                                         onChange={(date: any) => {setExpirationTime(date)}}
                                     /> :
                                 expiresType === 'countdown' ?
-                                    <>
+                                    <div className={"date-picker-box"}>
                                         <InputNumber
                                             placeholder="倒计时"
                                             min={dateMaxAndMin[countDateType].min}
                                             max={dateMaxAndMin[countDateType].max}
-                                            style={{width: 200, marginRight: 8}}
+                                            style={{marginRight: 8}}
                                             value={countDate}
                                             onChange={(value: any) => {setCountDate(value)}}
                                         /> 
@@ -250,13 +249,13 @@ const Home = () => {
                                             <Select.Option value={"minutes"}>分</Select.Option>
                                             <Select.Option value={"seconds"}>秒</Select.Option>
                                         </Select>
-                                    </> :
+                                    </div> :
                                 expiresType === 'pickup-count' ?
                                     <InputNumber
+                                        className={'date-picker'}
                                         placeholder="取件次数"
                                         min={1}
                                         max={99999}
-                                        style={{width: 200}}
                                         suffix={"次"}
                                         value={pickupCount}
                                         onChange={(value: any) => {setPickupCount(value)}}
@@ -267,7 +266,6 @@ const Home = () => {
                         <Input.TextArea
                             autoSize={{minRows: 3, maxRows: 10}}
                             maxLength={200000}
-                            style={{width: 320}}
                             value={textFile}
                             onChange={(text: string) => {setTextFile(text)}}
                         />
@@ -282,16 +280,16 @@ const Home = () => {
                                         setCodeList(codeList.filter(listItem => listItem.code !== item.code))
                                     }}
                                     title={
-                                        <div className={styles['banner-code-title']}>
+                                        <div className={'banner-code-title'}>
                                         {/* CODE: <a href={{`/?code=${item.code}`}} target='_blank'>{item.code}</a> */}
                                             CODE: {
                                                 item.code === null ?
-                                                    <Text className={styles["banner-code-description"]} type="secondary">保存失败</Text> :
+                                                    <Text className={"banner-code-description"} type="secondary">保存失败</Text> :
                                                     <span onClick={() => handleOpenCode(item.code || '')}><Tag checkable checked size="small" color='green'>{item.code}</Tag></span>
                                             }
                                         </div>
                                     }
-                                    content={<Text className={styles["banner-code-description"]} type="secondary">{item.content}</Text>}
+                                    content={<Text className={"banner-code-description"} type="secondary">{item.content}</Text>}
                                 />
                             })
                         }

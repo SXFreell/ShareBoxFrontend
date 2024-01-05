@@ -2,7 +2,7 @@ import { Result, Button } from '@arco-design/web-react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import './404.module.less';
+import './404.less';
 
 function NotFoundPage() {
     const navigate = useNavigate()
