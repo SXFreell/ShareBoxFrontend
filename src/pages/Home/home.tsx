@@ -1,4 +1,4 @@
-import { Alert, Button, DatePicker, Input, InputNumber, Radio, Select, Space, Tag, Typography } from "@arco-design/web-react"
+import { Alert, Button, DatePicker, Input, InputNumber, Radio, Select, Space, Tag, Typography, Message } from "@arco-design/web-react"
 import { useEffect, useState } from "react"
 import './home.less'
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
@@ -116,14 +116,20 @@ const Home = () => {
     const [codeList, setCodeList] = useState<CodeListItem[]>([])
 
     const handleGetTextFile = () => {
-        if (!verCode(code, true)) return;
+        if (!verCode(code, true)) {
+            Message.error({
+                content: '取件码格式错误'
+            })
+            return;
+        }
         instance.post('/get', {
             code: code
         }).then((res: any) => {
             setGetTextFile(res.data.data.content)
-            // Toast.success({
-            //     content: '取件成功'
-            // })
+            Message.success({
+                duration: 1500,
+                content: '取件成功'
+            })
         }).catch((err: any) => {
             console.log(err)
         })
@@ -144,9 +150,10 @@ const Home = () => {
                 content: textFile,
                 status: 'success'
             }])
-            // Toast.success({
-            //     content: '保存成功'
-            // })
+            Message.success({
+                duration: 1500,
+                content: '保存成功'
+            })
         }).catch((err: any) => {
             setCodeList([...codeList, {
                 code: null,
@@ -162,6 +169,7 @@ const Home = () => {
         if (getCode !== null && code !== getCode) {
             if (verCode(getCode, true)) {
                 setCode(getCode)
+                handleGetTextFile()
             } else {
                 navigate('/')
             }
@@ -274,7 +282,6 @@ const Home = () => {
                             codeList.map((item: CodeListItem, index: number) => {
                                 return <Alert
                                     key={`banner-code-${index}`}
-                                    style={{width: 376}}
                                     type={item.status}
                                     onClose={() => {
                                         setCodeList(codeList.filter(listItem => listItem.code !== item.code))
