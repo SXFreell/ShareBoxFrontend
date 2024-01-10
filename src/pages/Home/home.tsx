@@ -66,22 +66,22 @@ const transTimestamp: Function = (
         case 'never-expires':
             return -1;
         case 'expiration-time':
-            return date;
+            return date / 1000;
         case 'countdown':
             const timestamp = Date.now();
             switch (countDateType) {
                 case 'years':
-                    return timestamp + 1000 * 60 * 60 * 24 * 365 * countDate;
+                    return (timestamp + 1000 * 60 * 60 * 24 * 365 * countDate) / 1000;
                 case 'months':
-                    return timestamp + 1000 * 60 * 60 * 24 * 30 * countDate;
+                    return (timestamp + 1000 * 60 * 60 * 24 * 30 * countDate) / 1000;
                 case 'days':
-                    return timestamp + 1000 * 60 * 60 * 24 * countDate;
+                    return (timestamp + 1000 * 60 * 60 * 24 * countDate) / 1000;
                 case 'hours':
-                    return timestamp + 1000 * 60 * 60 * countDate;
+                    return (timestamp + 1000 * 60 * 60 * countDate) / 1000;
                 case 'minutes':
-                    return timestamp + 1000 * 60 * countDate;
+                    return (timestamp + 1000 * 60 * countDate) / 1000;
                 case 'seconds':
-                    return timestamp + 1000 * countDate;
+                    return (timestamp + 1000 * countDate) / 1000;
             }
             break;
         case 'pickup-count':
@@ -118,6 +118,7 @@ const Home = () => {
     const handleGetTextFile = () => {
         if (!verCode(code, true)) {
             Message.error({
+                closable: true,
                 content: '取件码格式错误'
             })
             return;
@@ -125,23 +126,37 @@ const Home = () => {
         instance.post('/get', {
             code: code
         }).then((res: any) => {
-            setGetTextFile(res.data.data.content)
-            Message.success({
-                duration: 1500,
-                content: '取件成功'
-            })
+            if (res.data.code === 20000) { 
+                setGetTextFile(res.data.data.content)
+                Message.success({
+                    duration: 1500,
+                    closable: true,
+                    content: '取件成功'
+                })
+            } else {
+                Message.error({
+                    closable: true,
+                    content: '取件码不存在'
+                })
+            }
         }).catch((err: any) => {
             console.log(err)
         })
     }
 
     const handleSaveTextFile = () => {
-        if (textFile.length === 0) return;
+        if (textFile.length === 0) {
+            Message.error({
+                closable: true,
+                content: '内容不能为空'
+            })
+            return;
+        }
         instance.post('/set', {
             type: 'TEXT',
             set_text_content: {
                 content: textFile,
-                expires: parseInt(transTimestamp(expiresType, countDateType, countDate, expirationTime)),
+                expires: Math.trunc(transTimestamp(expiresType, countDateType, countDate, expirationTime)),
                 pickup_count: expiresType === 'pickup-count' ? pickupCount : -1
             }
         }).then((res: any) => {
@@ -151,6 +166,7 @@ const Home = () => {
                 status: 'success'
             }])
             Message.success({
+                closable: true,
                 duration: 1500,
                 content: '保存成功'
             })
@@ -229,7 +245,10 @@ const Home = () => {
                                         placeholder="过期时间"
                                         disabledDate={disabledDate}
                                         value={expirationTime}
-                                        onChange={(date: any) => {setExpirationTime(date)}}
+                                        onChange={(date: any) => {
+                                            const timestamp = new Date(date).getTime();
+                                            setExpirationTime(timestamp)
+                                        }}
                                     /> :
                                 expiresType === 'countdown' ?
                                     <div className={"date-picker-box"}>
