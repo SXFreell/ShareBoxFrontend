@@ -115,8 +115,9 @@ const Home = () => {
 
     const [codeList, setCodeList] = useState<CodeListItem[]>([])
 
-    const handleGetTextFile = () => {
-        if (!verCode(code, true)) {
+    const handleGetTextFile = (preCode?: string) => {
+        const latestCode = preCode || code;
+        if (!verCode(latestCode, true)) {
             Message.error({
                 closable: true,
                 content: '取件码格式错误'
@@ -124,7 +125,7 @@ const Home = () => {
             return;
         }
         instance.post('/get', {
-            code: code
+            code: latestCode
         }).then((res: any) => {
             if (res.data.code === 20000) { 
                 setGetTextFile(res.data.data.content)
@@ -185,7 +186,7 @@ const Home = () => {
         if (getCode !== null && code !== getCode) {
             if (verCode(getCode, true)) {
                 setCode(getCode)
-                handleGetTextFile()
+                handleGetTextFile(getCode)
             } else {
                 navigate('/')
             }
@@ -210,7 +211,7 @@ const Home = () => {
                         <Input
                             className={"arco-input-group-suffix-button-custom"}
                             prefix="取件码"
-                            suffix={<Button size="default" onClick={ handleGetTextFile }>取文件</Button>}
+                            suffix={<Button size="default" onClick={() => {handleGetTextFile()} }>取文件</Button>}
                             value={code}
                             onInput={(e: any) => {
                                 verCode(e.target.value)
